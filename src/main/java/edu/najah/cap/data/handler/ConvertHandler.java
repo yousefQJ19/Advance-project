@@ -1,7 +1,10 @@
 package edu.najah.cap.data.handler;
 
+import edu.najah.cap.Converter.ConvertContext;
+import edu.najah.cap.Converter.ConvertPDFtoZip;
+import edu.najah.cap.Converter.IConvert;
 import edu.najah.cap.activity.IUserActivityService;
-import edu.najah.cap.data.PdfConverter;
+import edu.najah.cap.Converter.convertZipToPdf;
 import edu.najah.cap.data.ZipUtils;
 import edu.najah.cap.iam.IUserService;
 import edu.najah.cap.payment.IPayment;
@@ -16,12 +19,13 @@ public class ConvertHandler implements IDataHandler {
     private final IPostService postService;
     private final IPayment paymentService;
     private final IUserActivityService userActivityService;
-
+    private ConvertContext context=new ConvertContext();
     public ConvertHandler(IUserService userService, IPostService postService, IPayment paymentService, IUserActivityService userActivityService) {
         this.userService = userService;
         this.postService = postService;
         this.paymentService = paymentService;
         this.userActivityService = userActivityService;
+        this.context.setContext(new ConvertPDFtoZip());
     }
 
     @Override
@@ -56,8 +60,9 @@ public class ConvertHandler implements IDataHandler {
                     if (extractedFiles != null) {
                         for (File extractedFile : extractedFiles) {
                             if (!extractedFile.isDirectory()) {
-                                String pdfFilePath = extractedFile.getAbsolutePath() + ".pdf";
-                                PdfConverter.convertToPdf(extractedFile.getAbsolutePath(), pdfFilePath);
+                                String pdfFilePath = extractedFile.getAbsolutePath() +".pdf";
+
+                                context.getContext(extractedFile.getAbsolutePath(), pdfFilePath);
                             }
                         }
                         System.out.println("Conversion to PDF completed successfully.");

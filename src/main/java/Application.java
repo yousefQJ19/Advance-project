@@ -1,8 +1,9 @@
-package edu.najah.cap.data;
-
+import edu.najah.cap.Converter.ConvertContext;
+import edu.najah.cap.Upload.*;
 import edu.najah.cap.activity.IUserActivityService;
 import edu.najah.cap.activity.UserActivity;
 import edu.najah.cap.activity.UserActivityService;
+import edu.najah.cap.data.ConsoleOutputStream;
 import edu.najah.cap.data.handler.ConvertHandler;
 import edu.najah.cap.data.handler.DeleteHandler;
 import edu.najah.cap.data.handler.ExportHandler;
@@ -17,6 +18,8 @@ import edu.najah.cap.payment.Transaction;
 import edu.najah.cap.posts.IPostService;
 import edu.najah.cap.posts.Post;
 import edu.najah.cap.posts.PostService;
+import edu.najah.cap.Converter.*;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,7 +34,8 @@ public class Application {
     private static final IUserService userService = new UserService();
     private static final IPostService postService = new PostService();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+
         generateRandomData();
         Instant start = Instant.now();
         System.out.println("Application Started: " + start);
@@ -58,7 +62,7 @@ public class Application {
         IDataHandler convertHandler = new ConvertHandler(userService, postService, paymentService, userActivityService);
 
         String userId = "user10";
-        String storagePath = "C:\\Users\\Ammar\\OneDrive\\Desktop\\static\\AdvancedSoftwareDevelopment-main\\AdvancedSoftwareDevelopment-main\\UserData\\king";
+        String storagePath = "king/pdf_files/newdataa";
 
         // Export
         System.out.println("Exporting user data...");
@@ -69,8 +73,8 @@ public class Application {
         }
 
         // Convert
-        String inputFilePath = "C:\\Users\\Ammar\\OneDrive\\Desktop\\static\\AdvancedSoftwareDevelopment-main\\AdvancedSoftwareDevelopment-main\\UserData\\king\\newdataa.zip";
-        String outputFilePath = "C:\\Users\\Ammar\\OneDrive\\Desktop\\static\\AdvancedSoftwareDevelopment-main\\AdvancedSoftwareDevelopment-main\\UserData\\king\\newdataa.zip";
+        String inputFilePath = "king/pdf_files/newdataa/ZipFiles.zip";
+        String outputFilePath = "king/pdf_files/newdataa.zip";
         System.out.println("Converting to PDF...");
         try {
             convertHandler.convertToPdf(inputFilePath, outputFilePath);
@@ -78,6 +82,23 @@ public class Application {
             System.out.println("Error converting to PDF: " + e.getMessage());
         }
 
+        //convert pdf to zip
+        StringBuilder inputFilePathPdf=
+                new StringBuilder("king/pdf_files/newdataa/");
+        StringBuilder outPutFilePathZip=
+                new StringBuilder("king/pdf_files/ZipFiles/yousef.zip");
+            try {
+                ConvertContext context=new ConvertContext();
+                context.setContext(new ConvertPDFtoZip());
+                context.getContext(inputFilePathPdf.toString(),outPutFilePathZip.toString());
+                System.out.println("Converted pdf to zip Succefully\n");
+            }
+            catch (Exception e){
+                System.out.println("Error converting Pdf to Zip: " + e.getMessage());
+            }
+       // send a zip file by email as an attachment
+            SendByEmail s= new SendByEmail();
+            s.Send("yousefnajeh03@gmail.com");
         // Delete (soft)
         boolean hardDelete = false;
         System.out.println("Soft deleting user data...");
@@ -88,10 +109,13 @@ public class Application {
         boolean hardDeleteHard = true;
         System.out.println("Hard deleting user data...");
         deleteHandler.deleteUserData(userIdToDeleteHard, hardDeleteHard);
-
-        Instant end = Instant.now();
+        //Convert pdf to zip
+      Instant end = Instant.now();
         System.out.println("Application Ended: " + end);
+
     }
+
+
     private static void generateRandomData() {
         for (int i = 0; i < 100; i++) {
             generateUser(i);

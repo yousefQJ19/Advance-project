@@ -1,4 +1,4 @@
-package edu.najah.cap.data;
+package edu.najah.cap.Converter;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -9,10 +9,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 
-public class PdfConverter {
-    private static final Logger logger = LoggerFactory.getLogger(PdfConverter.class);
+public class convertZipToPdf {
+    private static final Logger logger = LoggerFactory.getLogger(convertZipToPdf.class);
 
-    public static void convertToPdf(String inputFilePath, String outputFilePath) {
+    public  void convertToPdf(String inputFilePath, String outputFilePath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(inputFilePath));
              FileOutputStream fos = new FileOutputStream(outputFilePath)) {
 
