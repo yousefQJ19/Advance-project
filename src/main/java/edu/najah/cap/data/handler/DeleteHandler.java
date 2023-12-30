@@ -26,21 +26,21 @@ public class DeleteHandler implements IDataHandler {
     @Override
     public void deleteUserData(String userId, boolean hardDelete) {
         UserProfile user = userService.getUser(userId);
-        if (user != null) {
-            if (hardDelete) {
-                HardDeleteProcessor hardDeleteProcessor = new HardDeleteProcessor(userService, paymentService, postService, userActivityService);
-                hardDeleteProcessor.deleteUserData(userId);
-
-                System.out.println("User data deleted successfully (including account).");
-            } else {
-                SoftDeleteProcessor softDeleteProcessor = new SoftDeleteProcessor(paymentService, postService, userActivityService);
-                softDeleteProcessor.deleteUserData(userId);
-
-                System.out.println("User data deleted successfully (except basic information).");
-            }
-        } else {
-            System.out.println("User not found.");
-        }
+//        if (user != null) {
+//            if (hardDelete) {
+//                HardDeleteProcessor hardDeleteProcessor = new HardDeleteProcessor(userService, paymentService, postService, userActivityService);
+//                hardDeleteProcessor.deleteUserData(userId);
+//
+//                System.out.println("User data deleted successfully (including account).");
+//            } else {
+//                SoftDeleteProcessor softDeleteProcessor = new SoftDeleteProcessor(paymentService, postService, userActivityService);
+//                softDeleteProcessor.deleteUserData(userId);
+//
+//                System.out.println("User data deleted successfully (except basic information).");
+//            }
+//        } else {
+//            System.out.println("User not found.");
+//        }
     }
 
     @Override
