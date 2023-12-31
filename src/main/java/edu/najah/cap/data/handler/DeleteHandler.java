@@ -1,6 +1,9 @@
 package edu.najah.cap.data.handler;
 
 import edu.najah.cap.activity.IUserActivityService;
+import edu.najah.cap.exceptions.BadRequestException;
+import edu.najah.cap.exceptions.NotFoundException;
+import edu.najah.cap.exceptions.SystemBusyException;
 import edu.najah.cap.iam.IUserService;
 import edu.najah.cap.iam.UserProfile;
 import edu.najah.cap.payment.IPayment;
@@ -24,7 +27,7 @@ public class DeleteHandler implements IDataHandler {
     }
 
     @Override
-    public void deleteUserData(String userId, boolean hardDelete) {
+    public void deleteUserData(String userId, boolean hardDelete) throws SystemBusyException, NotFoundException, BadRequestException {
         UserProfile user = userService.getUser(userId);
 //        if (user != null) {
 //            if (hardDelete) {

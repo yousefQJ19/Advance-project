@@ -5,6 +5,9 @@ import edu.najah.cap.data.exporter.UserActivitiesExporter;
 import edu.najah.cap.data.exporter.UserPaymentExporter;
 import edu.najah.cap.data.exporter.UserPostsExporter;
 import edu.najah.cap.data.exporter.UserProfileExporter;
+import edu.najah.cap.exceptions.BadRequestException;
+import edu.najah.cap.exceptions.NotFoundException;
+import edu.najah.cap.exceptions.SystemBusyException;
 import edu.najah.cap.iam.IUserService;
 import edu.najah.cap.iam.UserProfile;
 import edu.najah.cap.iam.UserType;
@@ -33,11 +36,11 @@ public class ExportHandler implements IDataHandler {
     }
 
     @Override
-    public void exportUserData(String userId, String storagePath) throws IOException {
+    public void exportUserData(String userId, String storagePath) throws IOException, SystemBusyException, NotFoundException, BadRequestException {
         UserProfile user = userService.getUser(userId);
         if (user != null) {
             try {
-                String fileName = user.getUserName() + "_data_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".zip";
+                String fileName = user.getUserName() + "_data_"  + ".zip";
                 String filePath = storagePath + File.separator + fileName;
 
                 FileOutputStream fos = new FileOutputStream(filePath);

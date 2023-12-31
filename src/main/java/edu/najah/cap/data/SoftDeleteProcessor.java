@@ -1,6 +1,9 @@
         package edu.najah.cap.data;
 
 import edu.najah.cap.activity.IUserActivityService;
+import edu.najah.cap.exceptions.BadRequestException;
+import edu.najah.cap.exceptions.NotFoundException;
+import edu.najah.cap.exceptions.SystemBusyException;
 import edu.najah.cap.payment.IPayment;
 import edu.najah.cap.posts.IPostService;
 import org.slf4j.Logger;
@@ -19,24 +22,24 @@ public class SoftDeleteProcessor {
         this.logger = LoggerFactory.getLogger(SoftDeleteProcessor.class);
     }
 
-    public void deleteUserData(String userId) {
+    public void deleteUserData(String userId) throws SystemBusyException, BadRequestException, NotFoundException {
         deletePaymentTransactions(userId);
         deletePosts(userId);
         deleteUserActivity(userId);
         logger.info("User data deleted for userId: {}", userId);
     }
 
-    private void deletePaymentTransactions(String userId) {
+    private void deletePaymentTransactions(String userId) throws SystemBusyException, BadRequestException, NotFoundException {
         paymentService.removeTransaction(userId, null);
         logger.debug("Payment transactions deleted for userId: {}", userId);
     }
 
-    private void deletePosts(String userId) {
+    private void deletePosts(String userId) throws SystemBusyException, BadRequestException, NotFoundException {
         postService.deletePost(userId, null);
         logger.debug("Posts deleted for userId: {}", userId);
     }
 
-    private void deleteUserActivity(String userId) {
+    private void deleteUserActivity(String userId) throws SystemBusyException, BadRequestException, NotFoundException {
         userActivityService.removeUserActivity(userId, null);
         logger.debug("User activity deleted for userId: {}", userId);
     }

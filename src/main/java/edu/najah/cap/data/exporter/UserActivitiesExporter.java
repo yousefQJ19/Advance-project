@@ -2,6 +2,9 @@ package edu.najah.cap.data.exporter;
 
 import edu.najah.cap.activity.IUserActivityService;
 import edu.najah.cap.activity.UserActivity;
+import edu.najah.cap.exceptions.BadRequestException;
+import edu.najah.cap.exceptions.NotFoundException;
+import edu.najah.cap.exceptions.SystemBusyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +45,8 @@ public class UserActivitiesExporter {
             }
         } catch (IOException e) {
             logger.error("Error during user activities export for userId: {}", userId, e);
+        } catch (SystemBusyException | BadRequestException | NotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 }

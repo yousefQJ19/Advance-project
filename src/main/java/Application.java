@@ -8,6 +8,9 @@ import edu.najah.cap.data.handler.ConvertHandler;
 import edu.najah.cap.data.handler.DeleteHandler;
 import edu.najah.cap.data.handler.ExportHandler;
 import edu.najah.cap.data.handler.IDataHandler;
+import edu.najah.cap.exceptions.BadRequestException;
+import edu.najah.cap.exceptions.NotFoundException;
+import edu.najah.cap.exceptions.SystemBusyException;
 import edu.najah.cap.iam.IUserService;
 import edu.najah.cap.iam.UserProfile;
 import edu.najah.cap.iam.UserService;
@@ -34,7 +37,7 @@ public class Application {
     private static final IUserService userService = new UserService();
     private static final IPostService postService = new PostService();
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, SystemBusyException, NotFoundException, BadRequestException {
 
         generateRandomData();
         Instant start = Instant.now();
@@ -61,8 +64,8 @@ public class Application {
         IDataHandler deleteHandler = new DeleteHandler(userService, postService, paymentService, userActivityService);
         IDataHandler convertHandler = new ConvertHandler(userService, postService, paymentService, userActivityService);
 
-        String userId = "user10";
-        String storagePath = "king/pdf_files/newdataa";
+        String userId = "user1";
+        String storagePath = "king/TextFiles";
 
         // Export
         System.out.println("Exporting user data...");
@@ -73,8 +76,8 @@ public class Application {
         }
 
         // Convert
-        String inputFilePath = "king/pdf_files/newdataa/ZipFiles.zip";
-        String outputFilePath = "king/pdf_files/newdataa.zip";
+        String inputFilePath = "king/TextFiles"+userId+"_data_.zip";
+        String outputFilePath = "king/pdf_files/newdataa";
         System.out.println("Converting to PDF...");
         try {
             convertHandler.convertToPdf(inputFilePath, outputFilePath);
@@ -97,8 +100,10 @@ public class Application {
                 System.out.println("Error converting Pdf to Zip: " + e.getMessage());
             }
        // send a zip file by email as an attachment
+
             SendByEmail s= new SendByEmail();
             s.Send("yousefnajeh03@gmail.com");
+
         // Delete (soft)
         boolean hardDelete = false;
         System.out.println("Soft deleting user data...");
