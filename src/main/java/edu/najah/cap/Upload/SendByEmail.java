@@ -30,7 +30,7 @@ public class SendByEmail implements IUploadData {
         try {
             // Create a MimeMessage
             MimeMessage message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("yousefnajeh03@gmail.com"));
+            message.setFrom(new InternetAddress("yousefnajeh.me"));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress("yousefnajeh3@gmail.com"));
             message.setSubject("the data you requsted from user data project");
             // Create the text part
@@ -39,12 +39,12 @@ public class SendByEmail implements IUploadData {
 
             // Create the attachment part
             MimeBodyPart attachmentPart = new MimeBodyPart();
-            attachmentPart.attachFile("king/pdf_files/newdataa/ZipFiles/new.zip");
+            attachmentPart.attachFile("king/pdf_files/ZipFiles/yousef.zip");
 
             // Create the multipart message
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(textPart);
-            multipart.addBodyPart(attachmentPart);
+            //multipart.addBodyPart(attachmentPart);
 
             // Set the multipart as the content of the message
             message.setContent(multipart);
