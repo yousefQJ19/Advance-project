@@ -60,9 +60,8 @@ public class ConvertHandler implements IDataHandler {
                     if (extractedFiles != null) {
                         for (File extractedFile : extractedFiles) {
                             if (!extractedFile.isDirectory()) {
-                                String pdfFilePath = extractedFile.getAbsolutePath() +".pdf";
 
-                                context.getContext(extractedFile.getAbsolutePath(), pdfFilePath);
+                                context.getContext(extractedFile.getAbsolutePath(), outputFilePath);
                             }
                         }
                         System.out.println("Conversion to PDF completed successfully.");

@@ -9,12 +9,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 
-public class convertZipToPdf {
+public class convertZipToPdf implements IConvert{
     private static final Logger logger = LoggerFactory.getLogger(convertZipToPdf.class);
-
-    public  void convertToPdf(String inputFilePath, String outputFilePath) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(inputFilePath));
-             FileOutputStream fos = new FileOutputStream(outputFilePath)) {
+    @Override
+    public void Convert(String pdfDirectory, String ZipDirectory) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(ZipDirectory));
+             FileOutputStream fos = new FileOutputStream(pdfDirectory)) {
 
             StringBuilder content = new StringBuilder();
             String line;
@@ -28,11 +28,11 @@ public class convertZipToPdf {
             document.add(new Paragraph(content.toString()));
             document.close();
 
-            logger.info("PDF conversion completed successfully. Input file: {}, Output file: {}", inputFilePath, outputFilePath);
+            logger.info("PDF conversion completed successfully. Input file: {}, Output file: {}", ZipDirectory, pdfDirectory);
         } catch (FileNotFoundException e) {
-            logger.error("Input file not found: {}", inputFilePath, e);
+            logger.error("Input file not found: {}", ZipDirectory, e);
         } catch (IOException | DocumentException e) {
-            logger.error("Error during PDF conversion. Input file: {}, Output file: {}", inputFilePath, outputFilePath, e);
+            logger.error("Error during PDF conversion. Input file: {}, Output file: {}", ZipDirectory, pdfDirectory, e);
         }
     }
 }
