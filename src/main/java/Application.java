@@ -51,23 +51,8 @@ public class Application {
         System.out.println("Note: You can use any of the following usernames: user0, user1, user2, user3, .... user99");
         String userName = scanner.nextLine();
         setLoginUserName(userName);
-//        JFrame frame = new JFrame("Application");
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.setSize(400, 300);
-//        frame.setLayout(new BorderLayout());
 
-        //JTextArea consoleTextArea = new JTextArea();
-        //consoleTextArea.setEditable(false);
 
-        //JScrollPane scrollPane = new JScrollPane(consoleTextArea);
-
-        //frame.add(scrollPane, BorderLayout.CENTER);
-
-        //PrintStream consolePrintStream = new PrintStream(new ConsoleOutputStream(consoleTextArea));
-        //System.setOut(consolePrintStream);
-        //System.setErr(consolePrintStream);
-
-        //frame.setVisible(true);
 
         ExportHandler exportHandler = new ExportHandler(userService, postService, paymentService, userActivityService);
         //IDataHandler deleteHandler = new DeleteHandler(userService, postService, paymentService, userActivityService);
