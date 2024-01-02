@@ -46,7 +46,7 @@ public class Application {
         Instant start = Instant.now();
         System.out.println("Application Started: " + start);
         Scanner scanner = new Scanner(System.in);
-        Util.setSkipValidation(true);
+        Util.setSkipValidation(false);
         System.out.println("Enter your username: ");
         System.out.println("Note: You can use any of the following usernames: user0, user1, user2, user3, .... user99");
         String userName = scanner.nextLine();
@@ -54,7 +54,7 @@ public class Application {
 
 
 
-        IDataHandler exportHandler = new ExportHandler(userService, postService, paymentService, userActivityService);
+        ExportHandler exportHandler = new ExportHandler(userService, postService, paymentService, userActivityService);
         //IDataHandler deleteHandler = new DeleteHandler(userService, postService, paymentService, userActivityService);
         IDataHandler convertHandler = new ConvertHandler(userService, postService, paymentService, userActivityService);
 
@@ -68,10 +68,12 @@ public class Application {
         } catch (IOException e) {
             System.out.println("Error exporting user data: " + e.getMessage());
         }
-            StringBuilder test =new StringBuilder("user10.pdf");
+
+
+        StringBuilder test =new StringBuilder(userName);
         // Convert
-        String inputFilePath = "king\\ZipFiles\\yousef.zip";
-        String outputFilePath = "king\\pdf_files\\newdataa"+"\\"+ test;
+        String inputFilePath = "king\\TextFiles\\"+test+"_data_.zip";
+        String outputFilePath = "king\\pdf_files"+"\\"+ test;
         System.out.println("\nConverting to PDF...");
         try {
             convertHandler.convertToPdf(inputFilePath, outputFilePath);
@@ -82,10 +84,11 @@ public class Application {
 
         //convert pdf to zip
         System.out.println("\nconverting pdf to zip ...");
+
         StringBuilder inputFilePathPdf=
-                new StringBuilder("king/pdf_files/newdataa/");
+                      new StringBuilder("king\\pdf_files");
         StringBuilder outPutFilePathZip=
-                new StringBuilder("king/pdf_files/ZipFiles/yousef.zip");
+                      new StringBuilder("king\\ZipFiles\\"+test+".zip");
             try {
                 ConvertContext context=new ConvertContext();
                 context.setContext(new ConvertPDFtoZip());
@@ -95,14 +98,19 @@ public class Application {
             catch (Exception e){
                 System.out.println("Error converting Pdf to Zip: " + e.getMessage());
             }
+
+
+
         // send a zip file by email as an attachment
+        System.out.println("sending data by email...");
             SendByEmail s= new SendByEmail();
             s.Send("yousefnajeh03@gmail.com");
+        System.out.println("sending data by email successfully");
 
         //Delete (soft)
         System.out.println("Soft deleting user data...");
         try {
-            DeletContext softContext= new DeletContext(new SoftDeleteProcessor(paymentService, postService , userActivityService));
+            DeletContext softContext= new DeletContext(new SoftDeleteProcessor(userService, paymentService,postService, userActivityService));
             softContext.getContext(userName);
             System.out.println("soft deleting done successfully\n");
         }
@@ -110,7 +118,7 @@ public class Application {
             System.out.println("Error error in soft deleting user data : " + e.getMessage());
         }
 
-          // Delete (hard)
+//          // Delete (hard)
 
         System.out.println("Hard deleting user data...");
         try {
@@ -121,10 +129,6 @@ public class Application {
         catch (Exception e) {
             System.out.println("Error error in hard deleting user data : " + e.getMessage());
         }
-
-
-      //Convert pdf to zip
-
 
       Instant end = Instant.now();
         System.out.println("Application Ended: " + end);

@@ -1,33 +1,34 @@
 package edu.najah.cap.Converter;
 
-import java.io.IOException;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import java.io.IOException;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 
-import static java.awt.SystemColor.text;
+import java.io.*;
 
 public class ConvertTextToPdf implements IConvert{
     @Override
-    public void Convert(String text, String pdfFilePath) throws IOException {
-        try (PDDocument document = new PDDocument()) {
-            PDPage page = new PDPage();
-            document.addPage(page);
-            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-                contentStream.beginText();
-                contentStream.newLineAtOffset(50, 700); // Adjust the position as needed
-                contentStream.showText(text);
-                contentStream.endText();
-            }
-            catch (IOException e){
-                System.out.println("error adding the content to the document\n");
+    public void Convert(String textFilePath, String pdfFilePath) throws IOException {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(textFilePath));
+
+            Document document = new Document();
+            FileOutputStream fos = new FileOutputStream(pdfFilePath);
+            PdfWriter writer = PdfWriter.getInstance(document, fos);
+
+            document.open();
+
+            String line;
+            while ((line = br.readLine()) != null) {
+                document.add(new Paragraph(line));
             }
 
-            document.save(pdfFilePath);
-        }
-        catch (IOException e) {
-            System.out.println("Error converting files to PDF: " + e.getMessage());
+            document.close();
+
+            System.out.println("Conversion of " + textFilePath + " to " + pdfFilePath + " completed successfully.");
+        } catch (DocumentException e) {
+            throw new RuntimeException(e);
         }
     }
 }
