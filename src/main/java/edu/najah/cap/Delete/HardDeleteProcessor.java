@@ -1,11 +1,13 @@
 package edu.najah.cap.Delete;
+
 import edu.najah.cap.activity.IUserActivityService;
 import edu.najah.cap.activity.UserActivity;
 import edu.najah.cap.exceptions.BadRequestException;
 import edu.najah.cap.exceptions.NotFoundException;
 import edu.najah.cap.exceptions.SystemBusyException;
 import edu.najah.cap.iam.IUserService;
-import edu.najah.cap.iam.UserService;
+import edu.najah.cap.iam.UserProfile;
+import edu.najah.cap.iam.UserType;
 import edu.najah.cap.payment.IPayment;
 import edu.najah.cap.payment.Transaction;
 import edu.najah.cap.posts.IPostService;
@@ -13,11 +15,9 @@ import edu.najah.cap.posts.Post;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-public class HardDeleteProcessor implements IDelete {
+public class  HardDeleteProcessor implements IDelete {
     private final IUserService userService;
     private final IPayment paymentService;
     private final IPostService postService;
@@ -33,10 +33,16 @@ public class HardDeleteProcessor implements IDelete {
     }
     @Override
     public void delete(String userId) throws SystemBusyException, NotFoundException, BadRequestException {
+        UserProfile test= userService.getUser(userId);
         deleteUser(userId);
-        deletePaymentTransactions(userId);
         deletePosts(userId);
-        deleteUserActivity(userId);
+        if (test.getUserType().equals(UserType.PREMIUM_USER)||
+                test.getUserType().equals(UserType.REGULAR_USER)){
+            deleteUserActivity(userId);
+        }
+        if (test.getUserType().equals(UserType.PREMIUM_USER)){
+            deletePaymentTransactions(userId);
+        }
     }
 
     private void deleteUser(String userId) throws SystemBusyException, NotFoundException, BadRequestException {

@@ -54,22 +54,5 @@ public class SendByEmail implements IUploadData {
         } catch (Exception e) {
             e.getMessage();
         }
-
-
-//        System.out.println("Email sent successfully!");
-//
-//        Email email = EmailBuilder.startingBlank()
-//                .from("From", "yousefnajeh3@gmail.com")
-//                .to("1 st Receiver", receiver)
-//                .withSubject("Email Subject")
-//                .withPlainText("Email Body")
-//                .buildEmail();
-//
-//        Mailer mailer = MailerBuilder
-//                .withSMTPServer("live.smtp.mailtrap.io", 587 , "api", "6a93448c394756bb4c10ac54ba374e0e")
-//                .withTransportStrategy(TransportStrategy.SMTPS).buildMailer();
-//
-//        mailer.sendMail(email);
-//    }
     }
 }

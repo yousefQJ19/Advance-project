@@ -1,10 +1,8 @@
 package edu.najah.cap.data.handler;
 
 import edu.najah.cap.Converter.ConvertContext;
-import edu.najah.cap.Converter.ConvertPDFtoZip;
-import edu.najah.cap.Converter.IConvert;
+import edu.najah.cap.Converter.ConvertTextToPdf;
 import edu.najah.cap.activity.IUserActivityService;
-import edu.najah.cap.Converter.convertZipToPdf;
 import edu.najah.cap.data.ZipUtils;
 import edu.najah.cap.iam.IUserService;
 import edu.najah.cap.payment.IPayment;
@@ -25,7 +23,7 @@ public class ConvertHandler implements IDataHandler {
         this.postService = postService;
         this.paymentService = paymentService;
         this.userActivityService = userActivityService;
-        this.context.setContext(new ConvertPDFtoZip());
+        this.context.setContext(new ConvertTextToPdf());
     }
 
     @Override
@@ -48,20 +46,20 @@ public class ConvertHandler implements IDataHandler {
             if (file.getName().endsWith(".zip")) {
                 try {
                     // Create a new directory to store the converted PDF files
-                    String outputDirectory = file.getParent() + File.separator + "pdf_files";
+                    String outputDirectory = file.getParent() + File.separator +file.getName().substring(0,10)+ "_text_files";
                     File outputDir = new File(outputDirectory);
-                    outputDir.mkdir();
 
                     // Extract the contents of the zip file
                     ZipUtils.extractZipFile(file.getAbsolutePath(), outputDirectory);
 
                     // Convert each extracted file to PDF
+                    char counter='a';
                     File[] extractedFiles = outputDir.listFiles();
                     if (extractedFiles != null) {
                         for (File extractedFile : extractedFiles) {
                             if (!extractedFile.isDirectory()) {
-
-                                context.getContext(extractedFile.getAbsolutePath(), outputFilePath);
+                                counter++;
+                                context.getContext(extractedFile.getAbsolutePath(), outputFilePath+counter+".pdf");
                             }
                         }
                         System.out.println("Conversion to PDF completed successfully.");
@@ -78,4 +76,5 @@ public class ConvertHandler implements IDataHandler {
             System.out.println("The provided file does not exist.");
         }
     }
+
 }

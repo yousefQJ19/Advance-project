@@ -17,11 +17,9 @@ import edu.najah.cap.posts.IPostService;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.zip.ZipOutputStream;
 
-public class ExportHandler implements IDataHandler {
+public class ExportHandler  {
 
     private final IUserService userService;
     private final IPostService postService;
@@ -35,7 +33,6 @@ public class ExportHandler implements IDataHandler {
         this.userActivityService = userActivityService;
     }
 
-    @Override
     public void exportUserData(String userId, String storagePath) throws IOException, SystemBusyException, NotFoundException, BadRequestException {
         UserProfile user = userService.getUser(userId);
         if (user != null) {
@@ -56,9 +53,10 @@ public class ExportHandler implements IDataHandler {
                     UserPaymentExporter userPaymentExporter = new UserPaymentExporter(paymentService);
                     userPaymentExporter.exportUserPaymentInfo(user.getUserName(), zipOut);
                 }
-
-                UserActivitiesExporter userActivitiesExporter = new UserActivitiesExporter(userActivityService);
-                userActivitiesExporter.exportUserActivities(user.getUserName(), zipOut);
+                if (user.getUserType()== UserType.PREMIUM_USER||user.getUserType()==UserType.REGULAR_USER){
+                    UserActivitiesExporter userActivitiesExporter = new UserActivitiesExporter(userActivityService);
+                    userActivitiesExporter.exportUserActivities(user.getUserName(), zipOut);
+                }
 
                 zipOut.close();
                 fos.close();
@@ -72,13 +70,4 @@ public class ExportHandler implements IDataHandler {
         }
     }
 
-    @Override
-    public void deleteUserData(String userId, boolean hardDelete) {
-        // ExportHandler doesn't handle deletion, implement deletion logic separately
-    }
-
-    @Override
-    public void convertToPdf(String inputFilePath, String outputFilePath) {
-        // ExportHandler doesn't handle conversion, implement conversion logic separately
-    }
 }
