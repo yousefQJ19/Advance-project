@@ -1,14 +1,14 @@
 import edu.najah.cap.Converter.ConvertContext;
+import edu.najah.cap.Converter.ConvertPDFtoZip;
+import edu.najah.cap.Converter.convertZipToPdf;
 import edu.najah.cap.Delete.DeletContext;
 import edu.najah.cap.Delete.HardDeleteProcessor;
 import edu.najah.cap.Delete.SoftDeleteProcessor;
-import edu.najah.cap.Upload.*;
+import edu.najah.cap.Upload.SendByEmail;
 import edu.najah.cap.activity.IUserActivityService;
 import edu.najah.cap.activity.UserActivity;
 import edu.najah.cap.activity.UserActivityService;
-import edu.najah.cap.data.ConsoleOutputStream;
 import edu.najah.cap.data.handler.ConvertHandler;
-import edu.najah.cap.data.handler.DeleteHandler;
 import edu.najah.cap.data.handler.ExportHandler;
 import edu.najah.cap.data.handler.IDataHandler;
 import edu.najah.cap.exceptions.BadRequestException;
@@ -25,15 +25,10 @@ import edu.najah.cap.payment.Transaction;
 import edu.najah.cap.posts.IPostService;
 import edu.najah.cap.posts.Post;
 import edu.najah.cap.posts.PostService;
-import edu.najah.cap.Converter.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.time.Instant;
 import java.util.Scanner;
 
@@ -56,23 +51,8 @@ public class Application {
         System.out.println("Note: You can use any of the following usernames: user0, user1, user2, user3, .... user99");
         String userName = scanner.nextLine();
         setLoginUserName(userName);
-//        JFrame frame = new JFrame("Application");
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.setSize(400, 300);
-//        frame.setLayout(new BorderLayout());
 
-        //JTextArea consoleTextArea = new JTextArea();
-        //consoleTextArea.setEditable(false);
 
-        //JScrollPane scrollPane = new JScrollPane(consoleTextArea);
-
-        //frame.add(scrollPane, BorderLayout.CENTER);
-
-        //PrintStream consolePrintStream = new PrintStream(new ConsoleOutputStream(consoleTextArea));
-        //System.setOut(consolePrintStream);
-        //System.setErr(consolePrintStream);
-
-        //frame.setVisible(true);
 
         IDataHandler exportHandler = new ExportHandler(userService, postService, paymentService, userActivityService);
         //IDataHandler deleteHandler = new DeleteHandler(userService, postService, paymentService, userActivityService);
