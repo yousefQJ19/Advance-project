@@ -11,11 +11,11 @@ target/
 .classpath
 .project
 .settings/
-king/
 # Operating System Files
 .DS_Store
 Thumbs.db
-
+TextFiles/
+ZipFiles/
 # Logs
 *.log
 
