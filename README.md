@@ -5,7 +5,7 @@ This is the template for the final project in the course. Your application shoul
 **Do not change any existing code in the template. You can add new classes and methods as you see fit.**
 
 ## Project Description
-*we designed aproject that simulates the soccial media apps from the back end prespictive we simulated data exporting and convirting using java while follwing the solid priceple and desing patterns when needed*
+*we designed aproject that simulates the soccial media apps from the back end prespictive we simulated data exporting and convirting using java while follwing the solid priceple and desing patterns when needed and recorded every operation using the logger librare from java *
 ## The class diagram for the project
 ![yousefsamara](https://github.com/yousefQJ19/Advance-project/assets/92521652/580f316a-2208-4f11-97e2-5d527b25e0d9)
 
@@ -52,3 +52,7 @@ This is the template for the final project in the course. Your application shoul
 
 * Adding a new user
  AddUserConfirmation : this service used to prevent the app from creating an account that has the same name as a deleted one 
+
+
+## Summary
+**we designed tha 4 section while followin the solid princeple mainly fucosed on cubbling dependance inversion and the single responsaplete problem we ensured that the app is scalable flexable and and and every operation excuted in the app is recorded in the log files using the logger for any accountabilte and the app designed focusing on the readers**
