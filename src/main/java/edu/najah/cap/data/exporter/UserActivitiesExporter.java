@@ -1,12 +1,12 @@
 package edu.najah.cap.data.exporter;
 
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import edu.najah.cap.activity.IUserActivityService;
 import edu.najah.cap.activity.UserActivity;
 import edu.najah.cap.exceptions.BadRequestException;
 import edu.najah.cap.exceptions.NotFoundException;
 import edu.najah.cap.exceptions.SystemBusyException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -39,12 +39,12 @@ public class UserActivitiesExporter {
                 zipOut.write(activitiesData.toString().getBytes());
                 zipOut.closeEntry();
 
-                logger.info("User activities exported successfully for userId: {}", userId);
+                logger.info("User activities exported successfully for userId: {}");
             } else {
-                logger.warn("No user activities found for userId: {}", userId);
+                logger.warn("No user activities found for userId: {}");
             }
         } catch (IOException e) {
-            logger.error("Error during user activities export for userId: {}", userId, e);
+            logger.error("Error during user activities export for userId: {}");
         } catch (SystemBusyException | BadRequestException | NotFoundException e) {
             throw new RuntimeException(e);
         }

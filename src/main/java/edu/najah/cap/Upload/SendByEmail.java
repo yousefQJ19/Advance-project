@@ -39,7 +39,7 @@ public class SendByEmail implements IUploadData {
 
             // Create the attachment part
             MimeBodyPart attachmentPart = new MimeBodyPart();
-            attachmentPart.attachFile("king/pdf_files/ZipFiles/yousef.zip");
+           // attachmentPart.attachFile("king/pdf_files/ZipFiles/yousef.zip");
 
             // Create the multipart message
             Multipart multipart = new MimeMultipart();

@@ -1,3 +1,5 @@
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import edu.najah.cap.Converter.ConvertContext;
 import edu.najah.cap.Converter.ConvertPDFtoZip;
 import edu.najah.cap.Converter.convertZipToPdf;
@@ -25,8 +27,6 @@ import edu.najah.cap.payment.Transaction;
 import edu.najah.cap.posts.IPostService;
 import edu.najah.cap.posts.Post;
 import edu.najah.cap.posts.PostService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -43,7 +43,10 @@ public class Application {
 
     public static void main(String[] args) throws IOException, SystemBusyException, BadRequestException, NotFoundException {
         generateRandomData();
+
         Instant start = Instant.now();
+        logger.info("Application started");
+
         System.out.println("Application Started: " + start);
         Scanner scanner = new Scanner(System.in);
         Util.setSkipValidation(false);
@@ -51,6 +54,7 @@ public class Application {
         System.out.println("Note: You can use any of the following usernames: user0, user1, user2, user3, .... user99");
         String userName = scanner.nextLine();
         setLoginUserName(userName);
+
 
 
 
@@ -67,6 +71,8 @@ public class Application {
             exportHandler.exportUserData(userName, storagePath);
         } catch (IOException e) {
             System.out.println("Error exporting user data: " + e.getMessage());
+            logger.error("Error exporting user data", e);
+
         }
 
 
@@ -78,6 +84,8 @@ public class Application {
         try {
             convertHandler.convertToPdf(inputFilePath, outputFilePath);
         } catch (IOException e) {
+            logger.error("Error converting to PDF", e);
+
             System.out.println("Error converting to PDF: " + e.getMessage()+"\n");
         }
 

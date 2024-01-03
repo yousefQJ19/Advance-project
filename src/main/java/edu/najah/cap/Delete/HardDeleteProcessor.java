@@ -1,5 +1,7 @@
 package edu.najah.cap.Delete;
 
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import edu.najah.cap.activity.IUserActivityService;
 import edu.najah.cap.activity.UserActivity;
 import edu.najah.cap.exceptions.BadRequestException;
@@ -12,8 +14,6 @@ import edu.najah.cap.payment.IPayment;
 import edu.najah.cap.payment.Transaction;
 import edu.najah.cap.posts.IPostService;
 import edu.najah.cap.posts.Post;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -47,7 +47,7 @@ public class  HardDeleteProcessor implements IDelete {
 
     private void deleteUser(String userId) throws SystemBusyException, NotFoundException, BadRequestException {
         userService.deleteUser(userId);
-        logger.info("User deleted for userId: {}", userId);
+        logger.info("User deleted for userId: {}");
     }
 
     private void deletePaymentTransactions(String userId) throws SystemBusyException, BadRequestException, NotFoundException {
@@ -63,7 +63,7 @@ public class  HardDeleteProcessor implements IDelete {
         if (posts!=null){
             posts.clear();
         }
-        logger.debug("Posts deleted for userId: {}", userId);
+        logger.debug("Posts deleted for userId: {}");
     }
 
     private void deleteUserActivity(String userId) throws SystemBusyException, BadRequestException, NotFoundException {

@@ -1,5 +1,7 @@
         package edu.najah.cap.Delete;
 
+        import com.itextpdf.text.log.Logger;
+        import com.itextpdf.text.log.LoggerFactory;
         import edu.najah.cap.activity.IUserActivityService;
         import edu.najah.cap.activity.UserActivity;
         import edu.najah.cap.exceptions.BadRequestException;
@@ -12,8 +14,6 @@
         import edu.najah.cap.payment.Transaction;
         import edu.najah.cap.posts.IPostService;
         import edu.najah.cap.posts.Post;
-        import org.slf4j.Logger;
-        import org.slf4j.LoggerFactory;
 
         import java.util.List;
 
@@ -42,7 +42,7 @@
         if (test.getUserType().equals(UserType.PREMIUM_USER)){
             deletePaymentTransactions(userId);
         }
-        logger.info("User data deleted for userId: {}", userId);
+        logger.info("User data deleted for userId: {}");
     }
 
     private void deletePaymentTransactions(String userId) throws SystemBusyException, BadRequestException, NotFoundException {
@@ -57,13 +57,15 @@
         if (posts!=null){
             posts.clear();
         }
-        logger.debug("Posts deleted for userId: {}", userId);
+        logger.debug("Posts deleted for userId: {}");
     }
 
     private void deleteUserActivity(String userId) throws SystemBusyException, BadRequestException, NotFoundException {
         List<UserActivity> activity=userActivityService.getUserActivity(userId);
         if(activity!=null){
             activity.clear();
+            logger.debug("User activity cleared for userId: {}");
+
         }
     }
 }

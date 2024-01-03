@@ -1,8 +1,8 @@
 package edu.najah.cap.data.exporter;
 
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import edu.najah.cap.iam.UserProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.zip.ZipEntry;
@@ -34,9 +34,9 @@ public class UserProfileExporter {
             zipOut.write(userProfileData.getBytes());
             zipOut.closeEntry();
 
-            logger.info("User profile exported successfully for username: {}", user.getUserName());
+            logger.info("User profile exported successfully for username: {}");
         } catch (IOException e) {
-            logger.error("Error during user profile export for username: {}", user.getUserName(), e);
+            logger.error("Error during user profile export for username: {}");
         }
     }
 }

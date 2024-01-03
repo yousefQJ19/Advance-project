@@ -1,7 +1,8 @@
 package edu.najah.cap.Upload;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +26,7 @@ public class UploadToDropBox implements IUploadData {
                 newFiles.add("localHost:3000");
                 DropBoxFiles.put(email, newFiles);
             }
-            logger.info("uploded the files to Dropbox for the email :{}",email);
+            logger.info("uploded the files to Dropbox for the email :{}");
         } catch (InterruptedException e) {
             logger.error("problem during uploading to dropbox occurred");
             throw new RuntimeException(e);

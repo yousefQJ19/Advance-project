@@ -1,12 +1,12 @@
 package edu.najah.cap.data.exporter;
 
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import edu.najah.cap.exceptions.BadRequestException;
 import edu.najah.cap.exceptions.NotFoundException;
 import edu.najah.cap.exceptions.SystemBusyException;
 import edu.najah.cap.payment.IPayment;
 import edu.najah.cap.payment.Transaction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -38,12 +38,12 @@ public class UserPaymentExporter {
                 zipOut.write(paymentInfoData.toString().getBytes());
                 zipOut.closeEntry();
 
-                logger.info("User payment information exported successfully for userId: {}", userId);
+                logger.info("User payment information exported successfully for userId: {}");
             } else {
-                logger.warn("No payment transactions found for userId: {}", userId);
+                logger.warn("No payment transactions found for userId: {}");
             }
         } catch (IOException e) {
-            logger.error("Error during user payment information export for userId: {}", userId, e);
+            logger.error("Error during user payment information export for userId: {}");
         } catch (SystemBusyException | BadRequestException | NotFoundException e) {
             throw new RuntimeException(e);
         }

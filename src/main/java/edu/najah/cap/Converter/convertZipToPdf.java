@@ -3,9 +3,9 @@ package edu.najah.cap.Converter;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 
@@ -28,11 +28,11 @@ public class convertZipToPdf implements IConvert{
             document.add(new Paragraph(content.toString()));
             document.close();
 
-            logger.info("PDF conversion completed successfully. Input file: {}, Output file: {}", ZipDirectory, pdfDirectory);
+            logger.info("PDF conversion completed successfully. Input file: {}, Output file: {}");
         } catch (FileNotFoundException e) {
-            logger.error("Input file not found: {}", ZipDirectory, e);
+            logger.error("Input file not found: {}");
         } catch (IOException | DocumentException e) {
-            logger.error("Error during PDF conversion. Input file: {}, Output file: {}", ZipDirectory, pdfDirectory, e);
+            logger.error("Error during PDF conversion. Input file: {}, Output file: {}");
         }
     }
 }
