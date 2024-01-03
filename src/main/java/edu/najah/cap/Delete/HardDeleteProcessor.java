@@ -45,8 +45,10 @@ public class  HardDeleteProcessor implements IDelete {
                 if (test.getUserType().equals(UserType.PREMIUM_USER)) {
                     deletePaymentTransactions(userId);
                 }
+
                 logger.info("User data hard deleted for userId: {}");
             } catch (Exception e) {
+
                 logger.error("Error in hard deleting user data for userId: {}");
             }
         }).start();
@@ -55,6 +57,7 @@ public class  HardDeleteProcessor implements IDelete {
 
     private void deleteUser(String userId) throws SystemBusyException, NotFoundException, BadRequestException {
         userService.deleteUser(userId);
+
         logger.info("User deleted for userId: {}");
     }
 
@@ -71,6 +74,7 @@ public class  HardDeleteProcessor implements IDelete {
         if (posts!=null){
             posts.clear();
         }
+
         logger.debug("Posts deleted for userId: {}");
     }
 

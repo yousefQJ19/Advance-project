@@ -19,8 +19,6 @@ public class SendByEmail implements IUploadData {
         properties.put("mail.smtp.port", "587");
         properties.put("mail.smtp.auth", "true");
         properties.put("mail.smtp.starttls.enable", "true");
-
-
         Session session = Session.getInstance(properties, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -28,28 +26,17 @@ public class SendByEmail implements IUploadData {
             }
         });
         try {
-            // Create a MimeMessage
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress("yousefnajeh.me"));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress("yousefnajeh3@gmail.com"));
             message.setSubject("the data you requsted from user data project");
-            // Create the text part
             MimeBodyPart textPart = new MimeBodyPart();
             textPart.setText("hi this user data app this is the data you requsted");
-
-            // Create the attachment part
             MimeBodyPart attachmentPart = new MimeBodyPart();
-           // attachmentPart.attachFile("king/pdf_files/ZipFiles/yousef.zip");
-
-            // Create the multipart message
+            attachmentPart.attachFile("king/pdf_files/ZipFiles/yousef.zip");
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(textPart);
-            //multipart.addBodyPart(attachmentPart);
-
-            // Set the multipart as the content of the message
             message.setContent(multipart);
-
-            // Send the message
             Transport.send(message);
         } catch (Exception e) {
             e.getMessage();

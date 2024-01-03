@@ -10,6 +10,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import java.io.*;
 
 public class convertZipToPdf implements IConvert{
+
     private static final Logger logger = LoggerFactory.getLogger(convertZipToPdf.class);
     @Override
     public void Convert(String pdfDirectory, String ZipDirectory) throws IOException {
@@ -29,9 +30,13 @@ public class convertZipToPdf implements IConvert{
             document.close();
 
             logger.info("PDF conversion completed successfully. Input file: {}, Output file: {}");
+
         } catch (FileNotFoundException e) {
+
             logger.error("Input file not found: {}");
+
         } catch (IOException | DocumentException e) {
+
             logger.error("Error during PDF conversion. Input file: {}, Output file: {}");
         }
     }

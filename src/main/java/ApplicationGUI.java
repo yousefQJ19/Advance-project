@@ -59,11 +59,14 @@ public class ApplicationGUI extends JFrame {
         hardDeleteButton = new JButton("Hard Delete User Data");
 
         exportButton.addActionListener(new ActionListener() {
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 exportUserData();
             }
+
         });
+
 
         convertButton.addActionListener(new ActionListener() {
             @Override
@@ -71,6 +74,7 @@ public class ApplicationGUI extends JFrame {
                 convertToPDF();
             }
         });
+
 
         sendEmailButton.addActionListener(new ActionListener() {
             @Override
@@ -83,6 +87,7 @@ public class ApplicationGUI extends JFrame {
             }
         });
 
+
         softDeleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -90,6 +95,7 @@ public class ApplicationGUI extends JFrame {
             }
         });
 
+        
         hardDeleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

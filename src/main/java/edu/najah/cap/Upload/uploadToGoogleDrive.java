@@ -25,8 +25,10 @@ public class uploadToGoogleDrive implements IUploadData {
                 driveFiles.put(email, newFiles);
             }
             logger.info("Uploaded to Google Drive successfully; the link was sent to: {}");
+
         } catch (InterruptedException e) {
             logger.error("A problem occurred in uploading the files", e);
+
             throw new RuntimeException(e);
         }
     }
