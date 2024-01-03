@@ -3,6 +3,9 @@ import edu.najah.cap.Converter.ConvertFactory;
 import edu.najah.cap.Delete.DeletContext;
 import edu.najah.cap.Delete.DeleteFactory;
 import edu.najah.cap.Upload.SendByEmail;
+import edu.najah.cap.Upload.UploadContext;
+import edu.najah.cap.Upload.UploadToDropBox;
+import edu.najah.cap.Upload.uploadToGoogleDrive;
 import edu.najah.cap.activity.IUserActivityService;
 import edu.najah.cap.activity.UserActivity;
 import edu.najah.cap.activity.UserActivityService;
@@ -21,6 +24,7 @@ import edu.najah.cap.payment.Transaction;
 import edu.najah.cap.posts.IPostService;
 import edu.najah.cap.posts.Post;
 import edu.najah.cap.posts.PostService;
+import jakarta.mail.MessagingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +41,7 @@ public class Application {
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
     private static String loginUserName;
 
-    public static void main(String[] args) throws IOException, SystemBusyException, BadRequestException, NotFoundException, InterruptedException {
+    public static void main(String[] args) throws IOException, BadRequestException, NotFoundException, InterruptedException, MessagingException, SystemBusyException {
         generateRandomData();
         Instant start = Instant.now();
         System.out.println("Application Started: " + start);
@@ -47,86 +51,146 @@ public class Application {
         System.out.println("Note: You can use any of the following usernames: user0, user1, user2, user3, .... user99");
         String userName = scanner.nextLine();
         setLoginUserName(userName);
-
-
-
         ExportHandler exportHandler = new ExportHandler(userService, postService, paymentService, userActivityService);
-        ConvertContext convertContext = new ConvertContext();
-
-        //String userId = "user10";
-        String storagePath = "king/TextFiles";
-
-         //Export
-        System.out.println("Exporting user data...");
-        try {
-            exportHandler.exportUserData(userName, storagePath);
-        } catch (IOException e) {
-            System.out.println("Error exporting user data: " + e.getMessage());
-        }
-        catch (SystemBusyException ex){
-            Thread.sleep(100);
-            exportHandler.exportUserData(userName, storagePath);
-        }
-
-
-        StringBuilder test =new StringBuilder(userName);
-        convertContext.setContext(ConvertFactory.getConverter("ZipToPdf"));
-        // Convert
-        String inputFilePath = "king\\TextFiles\\"+test+"_data_.zip";
-        String outputFilePath = "king\\pdf_files"+"\\"+ test;
-        System.out.println("\nConverting to PDF...");
-        try {
-            convertContext.getContext(inputFilePath, outputFilePath);
-        } catch (IOException e) {
-            System.out.println("Error converting to PDF: " + e.getMessage()+"\n");
-        }
-
-
-        //convert pdf to zip
-        System.out.println("\nconverting pdf to zip ...");
-
-        StringBuilder inputFilePathPdf=
-                      new StringBuilder("king\\pdf_files");
-        StringBuilder outPutFilePathZip=
-                      new StringBuilder("king\\ZipFiles\\"+test+".zip");
-
-        convertContext.setContext(ConvertFactory.getConverter("PdfToZip"));
-            try {
-                convertContext.getContext(inputFilePathPdf.toString(),outPutFilePathZip.toString());
-                System.out.println("Converted pdf to zip Successfully\n");
-            }  catch (Exception e){
-                System.out.println("Error converting Pdf to Zip: " + e.getMessage());
-            }
-
-
-        // send a zip file by email as an attachment
-        System.out.println("sending data by email...");
-            SendByEmail s= new SendByEmail();
-            s.Send("yousefnajeh03@gmail.com");
-        System.out.println("sending data by email successfully");
-
-
         DeletContext deleteContext= new DeletContext();
         deleteContext.setContext(DeleteFactory.getDeletion("soft"));
-        //Delete (soft)
-        System.out.println("Soft deleting user data...");
-        try {
-            deleteContext.getContext(userName);
-            System.out.println("soft deleting done successfully\n");
-        }
-        catch (Exception e) {
-            System.out.println("Error error in soft deleting user data : " + e.getMessage());
-        }
+        ConvertContext convertContext = new ConvertContext();
+        String storagePath = "king/TextFiles";
 
-//          // Delete (hard)
-        deleteContext.setContext(DeleteFactory.getDeletion("soft"));
-        System.out.println("Hard deleting user data...");
-        try {
-            deleteContext.getContext(userName);
-            System.out.println("had deleting the user successfully\n");
-        }
-        catch (Exception e) {
-            System.out.println("Error error in hard deleting user data : " + e.getMessage());
+        int option=9999;
+        while (option!=0){
+            System.out.println("you operations");
+            System.out.println("1- collect data");
+            System.out.println("2-Soft delete");
+            System.out.println("3-hard delete");
+            option= scanner.nextInt();
+            if (option ==1){
+                //data collected
+                System.out.println("Exporting user data...");
+                int maxtryes=0;
+                while (maxtryes !=3){
+
+                    try  {
+                        exportHandler.exportUserData(userName, storagePath);
+                        break;
+                    } catch (IOException | SystemBusyException e) {
+                        Thread.sleep(1000);
+                        System.out.println("Error exporting user data: " + e.getMessage());
+                        maxtryes++;
+                    }
+
+                }
+                StringBuilder test =new StringBuilder(userName);
+                convertContext.setContext(ConvertFactory.getConverter("ZipToPdf"));
+
+                // Convert zip(text) to pdf
+                String inputFilePath = "king\\TextFiles\\"+test+"_data_.zip";
+                String outputFilePath = "king\\pdf_files"+"\\"+ test;
+                System.out.println("\nConverting to PDF...");
+                int maxTry=0;
+                while (maxTry !=3){
+                    try {
+                        convertContext.getContext(inputFilePath, outputFilePath);
+                        break;
+                    } catch (IOException  e) {
+                        Thread.sleep(1000);
+                        System.out.println("Error converting to PDF: " + e.getMessage()+"\n");
+                        maxTry++;
+                    }
+                }
+
+
+                System.out.println("\nconverting pdf to zip ...");
+
+                //convert pdf to zip
+
+                StringBuilder inputFilePathPdf=
+                        new StringBuilder("king\\pdf_files");
+                StringBuilder outPutFilePathZip=
+                        new StringBuilder("king\\ZipFiles\\"+test+".zip");
+
+                convertContext.setContext(ConvertFactory.getConverter("PdfToZip"));
+                try {
+                    convertContext.getContext(inputFilePathPdf.toString(),outPutFilePathZip.toString());
+                    System.out.println("Converted pdf to zip Successfully\n");
+                }  catch (IOException  e){
+                    System.out.println("Error converting Pdf to Zip: " + e.getMessage());
+                    convertContext.getContext(inputFilePathPdf.toString(),outPutFilePathZip.toString());
+                }
+                int option2=9999;
+                UploadContext uploadContext=new UploadContext();
+                System.out.println("where do you want you data to be upload");
+                System.out.println("1- send the files in email as attachment");
+                System.out.println("2- upload the files on google drive and receive the link as email ");
+                System.out.println("3- upload the files on dropbox and receive the link as email ");
+                option2= scanner.nextInt();
+                if(option2 == 1){
+                    int sMaxTry=0;
+                    // send a zip file by email as an attachment
+                    while(sMaxTry!=3){
+                        try {
+                            uploadContext.setContext(new SendByEmail());
+                            System.out.println("sending data by email...");
+                            uploadContext.getContext(userService.getUser(userName).getEmail());
+                            System.out.println("sending data by email successfully");
+                            break;
+                        }
+                        catch (SystemBusyException e){
+                            Thread.sleep(1000);
+                            System.out.println("Error sending the massage : " + e.getMessage());
+                            sMaxTry++;
+                        }
+                    }
+
+
+                }
+                if(option2 == 2){
+                    uploadContext.setContext(new uploadToGoogleDrive());
+                    uploadContext.getContext(userService.getUser(userName).getEmail());
+                }
+                if(option2 == 3){
+                    uploadContext.setContext(new UploadToDropBox());
+                    uploadContext.getContext(userService.getUser(userName).getEmail());
+                }
+
+            } else if (option==2) {
+                //soft delete
+                int sMaxTry=0;
+                System.out.println("Soft deleting user data...");
+                while (sMaxTry !=3){
+                    try {
+                        deleteContext.getContext(userName);
+                        System.out.println("soft deleting done successfully\n");
+                        break;
+                    }
+                    catch ( SystemBusyException e) {
+                        Thread.sleep(1000);
+                        System.out.println("Error error in soft deleting user data : " + e.getMessage());
+                        sMaxTry++;
+                    }
+                }
+
+            }
+            else if(option==3){
+                //hard delete
+                int sMaxTry=0;
+                deleteContext.setContext(DeleteFactory.getDeletion("soft"));
+                System.out.println("Hard deleting user data...");
+                while (sMaxTry !=3){
+                    try {
+                        deleteContext.getContext(userName);
+                        System.out.println("had deleting the user successfully\n");
+                        break;
+                    }
+                    catch (Exception e) {
+                        Thread.sleep(1000);
+                        System.out.println("Error error in hard deleting user data : " + e.getMessage());
+                        sMaxTry++;
+                    }
+                }
+
+
+            }
         }
 
       Instant end = Instant.now();

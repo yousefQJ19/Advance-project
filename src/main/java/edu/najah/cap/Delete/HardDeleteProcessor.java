@@ -23,28 +23,35 @@ public class  HardDeleteProcessor implements IDelete {
     private final IPayment paymentService;
     private final IPostService postService;
     private final IUserActivityService userActivityService;
-    private final Logger logger;
-    private static HashSet<String>deletedUsers=new HashSet<>();
+    private final Logger logger=  LoggerFactory.getLogger(HardDeleteProcessor.class);
+    private static HashSet<String> deletedUsers=new HashSet<>();
     public HardDeleteProcessor(IUserService userService, IPayment paymentService, IPostService postService, IUserActivityService userActivityService) {
         this.userService = userService;
         this.paymentService = paymentService;
         this.postService = postService;
         this.userActivityService = userActivityService;
-        this.logger = LoggerFactory.getLogger(HardDeleteProcessor.class);
+
+
     }
     @Override
-    public void delete(String userId) throws SystemBusyException, NotFoundException, BadRequestException {
-        UserProfile test= userService.getUser(userId);
-        deletedUsers.add(test.getUserName());
-        deleteUser(userId);
-        deletePosts(userId);
-        if (test.getUserType().equals(UserType.PREMIUM_USER)||
-                test.getUserType().equals(UserType.REGULAR_USER)){
-            deleteUserActivity(userId);
-        }
-        if (test.getUserType().equals(UserType.PREMIUM_USER)){
-            deletePaymentTransactions(userId);
-        }
+    public void delete(String userId) {
+        new Thread(() -> {
+            try {
+                UserProfile test = userService.getUser(userId);
+                deleteUser(userId);
+                deletePosts(userId);
+                if (test.getUserType().equals(UserType.PREMIUM_USER) ||
+                        test.getUserType().equals(UserType.REGULAR_USER)) {
+                    deleteUserActivity(userId);
+                }
+                if (test.getUserType().equals(UserType.PREMIUM_USER)) {
+                    deletePaymentTransactions(userId);
+                }
+                logger.info("User data hard deleted for userId: {}", userId);
+            } catch (Exception e) {
+                logger.error("Error in hard deleting user data for userId: {}", userId, e);
+            }
+        }).start();
     }
 
     private void deleteUser(String userId) throws SystemBusyException, NotFoundException, BadRequestException {

@@ -8,6 +8,4 @@ import java.io.IOException;
 
 public interface IDataHandler {
     void exportUserData(String userId, String storagePath) throws IOException, SystemBusyException, NotFoundException, BadRequestException;
-    void deleteUserData(String userId, boolean hardDelete) throws SystemBusyException, NotFoundException, BadRequestException;
-    void convertToPdf(String inputFilePath, String outputFilePath) throws IOException;
 }

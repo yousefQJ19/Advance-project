@@ -19,7 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.zip.ZipOutputStream;
 
-public class ExportHandler  {
+public class ExportHandler implements IDataHandler {
 
     private final IUserService userService;
     private final IPostService postService;
@@ -33,7 +33,7 @@ public class ExportHandler  {
         this.userActivityService = userActivityService;
     }
 
-    public void exportUserData(String userId, String storagePath) throws IOException, SystemBusyException, NotFoundException, BadRequestException {
+    public synchronized void exportUserData(String userId, String storagePath) throws IOException, SystemBusyException, NotFoundException, BadRequestException {
         UserProfile user = userService.getUser(userId);
         if (user != null) {
             try {

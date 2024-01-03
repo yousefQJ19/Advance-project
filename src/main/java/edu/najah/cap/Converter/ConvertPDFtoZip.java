@@ -15,6 +15,7 @@ public class ConvertPDFtoZip implements IConvert{
     private static final Logger logger = LoggerFactory.getLogger(ConvertPDFtoZip.class);
     @Override
     public void Convert(String pdfDirectory, String zipDirectory) {
+        new Thread(() -> {
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(zipDirectory))) {
             File pdfFolder = new File(pdfDirectory);
             File[] pdfFiles = pdfFolder.listFiles((dir, name) -> name.toLowerCase().endsWith(".pdf"));
@@ -34,6 +35,7 @@ public class ConvertPDFtoZip implements IConvert{
             System.err.println("Error during PDF to Zip conversion. Input folder: " + pdfDirectory + ", Output zip file: " + zipDirectory);
             e.printStackTrace();
         }
+        }).start();
     }
 
     private void addPdfToZip(File pdfFile, ZipOutputStream zipOutputStream) throws IOException {
