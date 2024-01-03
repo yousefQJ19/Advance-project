@@ -1,15 +1,12 @@
 import edu.najah.cap.Converter.ConvertContext;
-import edu.najah.cap.Converter.ConvertPDFtoZip;
+import edu.najah.cap.Converter.ConvertFactory;
 import edu.najah.cap.Delete.DeletContext;
-import edu.najah.cap.Delete.HardDeleteProcessor;
-import edu.najah.cap.Delete.SoftDeleteProcessor;
+import edu.najah.cap.Delete.DeleteFactory;
 import edu.najah.cap.Upload.SendByEmail;
 import edu.najah.cap.activity.IUserActivityService;
 import edu.najah.cap.activity.UserActivity;
 import edu.najah.cap.activity.UserActivityService;
-import edu.najah.cap.data.handler.ConvertHandler;
 import edu.najah.cap.data.handler.ExportHandler;
-import edu.najah.cap.data.handler.IDataHandler;
 import edu.najah.cap.exceptions.BadRequestException;
 import edu.najah.cap.exceptions.NotFoundException;
 import edu.najah.cap.exceptions.SystemBusyException;
@@ -40,7 +37,7 @@ public class Application {
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
     private static String loginUserName;
 
-    public static void main(String[] args) throws IOException, SystemBusyException, BadRequestException, NotFoundException {
+    public static void main(String[] args) throws IOException, SystemBusyException, BadRequestException, NotFoundException, InterruptedException {
         generateRandomData();
         Instant start = Instant.now();
         System.out.println("Application Started: " + start);
@@ -54,8 +51,7 @@ public class Application {
 
 
         ExportHandler exportHandler = new ExportHandler(userService, postService, paymentService, userActivityService);
-        //IDataHandler deleteHandler = new DeleteHandler(userService, postService, paymentService, userActivityService);
-        IDataHandler convertHandler = new ConvertHandler(userService, postService, paymentService, userActivityService);
+        ConvertContext convertContext = new ConvertContext();
 
         //String userId = "user10";
         String storagePath = "king/TextFiles";
@@ -67,15 +63,20 @@ public class Application {
         } catch (IOException e) {
             System.out.println("Error exporting user data: " + e.getMessage());
         }
+        catch (SystemBusyException ex){
+            Thread.sleep(100);
+            exportHandler.exportUserData(userName, storagePath);
+        }
 
 
         StringBuilder test =new StringBuilder(userName);
+        convertContext.setContext(ConvertFactory.getConverter("ZipToPdf"));
         // Convert
         String inputFilePath = "king\\TextFiles\\"+test+"_data_.zip";
         String outputFilePath = "king\\pdf_files"+"\\"+ test;
         System.out.println("\nConverting to PDF...");
         try {
-            convertHandler.convertToPdf(inputFilePath, outputFilePath);
+            convertContext.getContext(inputFilePath, outputFilePath);
         } catch (IOException e) {
             System.out.println("Error converting to PDF: " + e.getMessage()+"\n");
         }
@@ -88,16 +89,14 @@ public class Application {
                       new StringBuilder("king\\pdf_files");
         StringBuilder outPutFilePathZip=
                       new StringBuilder("king\\ZipFiles\\"+test+".zip");
+
+        convertContext.setContext(ConvertFactory.getConverter("PdfToZip"));
             try {
-                ConvertContext context=new ConvertContext();
-                context.setContext(new ConvertPDFtoZip());
-                context.getContext(inputFilePathPdf.toString(),outPutFilePathZip.toString());
+                convertContext.getContext(inputFilePathPdf.toString(),outPutFilePathZip.toString());
                 System.out.println("Converted pdf to zip Successfully\n");
-            }
-            catch (Exception e){
+            }  catch (Exception e){
                 System.out.println("Error converting Pdf to Zip: " + e.getMessage());
             }
-
 
 
         // send a zip file by email as an attachment
@@ -106,11 +105,13 @@ public class Application {
             s.Send("yousefnajeh03@gmail.com");
         System.out.println("sending data by email successfully");
 
+
+        DeletContext deleteContext= new DeletContext();
+        deleteContext.setContext(DeleteFactory.getDeletion("soft"));
         //Delete (soft)
         System.out.println("Soft deleting user data...");
         try {
-            DeletContext softContext= new DeletContext(new SoftDeleteProcessor(userService, paymentService,postService, userActivityService));
-            softContext.getContext(userName);
+            deleteContext.getContext(userName);
             System.out.println("soft deleting done successfully\n");
         }
         catch (Exception e) {
@@ -118,11 +119,10 @@ public class Application {
         }
 
 //          // Delete (hard)
-
+        deleteContext.setContext(DeleteFactory.getDeletion("soft"));
         System.out.println("Hard deleting user data...");
         try {
-            DeletContext hardContext=new DeletContext(new HardDeleteProcessor(userService, paymentService,postService, userActivityService));
-            hardContext.getContext(userName);
+            deleteContext.getContext(userName);
             System.out.println("had deleting the user successfully\n");
         }
         catch (Exception e) {
