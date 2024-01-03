@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,7 +12,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class ConvertPDFtoZip implements IConvert{
-    private static final Logger logger = LoggerFactory.getLogger(convertZipToPdf.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConvertPDFtoZip.class);
     @Override
     public void Convert(String pdfDirectory, String zipDirectory) {
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(zipDirectory))) {
@@ -25,7 +26,7 @@ public class ConvertPDFtoZip implements IConvert{
                     Files.delete(path);
                 }
             }
-            System.out.println("PDF conversion completed successfully. Input folder: " + pdfDirectory + ", Output zip file: " + zipDirectory);
+            logger.info("PDF conversion completed successfully. Input folder: " + pdfDirectory + ", Output zip file: " + zipDirectory);
         } catch (FileNotFoundException e) {
             System.err.println("Input file not found: " + pdfDirectory);
             e.printStackTrace();

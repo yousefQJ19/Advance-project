@@ -1,6 +1,5 @@
 import edu.najah.cap.Converter.ConvertContext;
 import edu.najah.cap.Converter.ConvertPDFtoZip;
-import edu.najah.cap.Converter.convertZipToPdf;
 import edu.najah.cap.Delete.DeletContext;
 import edu.najah.cap.Delete.HardDeleteProcessor;
 import edu.najah.cap.Delete.SoftDeleteProcessor;
@@ -38,7 +37,7 @@ public class Application {
     private static final IPayment paymentService = new PaymentService();
     private static final IUserService userService = new UserService();
     private static final IPostService postService = new PostService();
-    private static final Logger logger = LoggerFactory.getLogger(convertZipToPdf.class);
+    private static final Logger logger = LoggerFactory.getLogger(Application.class);
     private static String loginUserName;
 
     public static void main(String[] args) throws IOException, SystemBusyException, BadRequestException, NotFoundException {
