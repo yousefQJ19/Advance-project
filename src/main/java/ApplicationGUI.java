@@ -1,7 +1,5 @@
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
-import edu.najah.cap.Converter.ConvertContext;
-import edu.najah.cap.Converter.ConvertPDFtoZip;
 import edu.najah.cap.Converter.convertZipToPdf;
 import edu.najah.cap.Delete.DeletContext;
 import edu.najah.cap.Delete.HardDeleteProcessor;
@@ -28,24 +26,92 @@ import edu.najah.cap.posts.IPostService;
 import edu.najah.cap.posts.Post;
 import edu.najah.cap.posts.PostService;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Scanner;
 
-public class Application {
-
+public class ApplicationGUI extends JFrame {
     private static final IUserActivityService userActivityService = new UserActivityService();
     private static final IPayment paymentService = new PaymentService();
     private static final IUserService userService = new UserService();
     private static final IPostService postService = new PostService();
     private static final Logger logger = LoggerFactory.getLogger(convertZipToPdf.class);
     private static String loginUserName;
+    private JButton exportButton;
+    private JButton convertButton;
+    private JButton sendEmailButton;
+    private JButton softDeleteButton;
+    private JButton hardDeleteButton;
 
-    public static void main(String[] args) throws IOException, SystemBusyException, BadRequestException, NotFoundException {
+    public ApplicationGUI() {
+        setTitle("Application");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new FlowLayout());
+
+        exportButton = new JButton("Export User Data");
+        convertButton = new JButton("Convert to PDF");
+        sendEmailButton = new JButton("Send Data by Email");
+        softDeleteButton = new JButton("Soft Delete User Data");
+        hardDeleteButton = new JButton("Hard Delete User Data");
+
+        exportButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                exportUserData();
+            }
+        });
+
+        convertButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                convertToPDF();
+            }
+        });
+
+        sendEmailButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    sendDataByEmail();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        softDeleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                softDeleteUserData();
+            }
+        });
+
+        hardDeleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                hardDeleteUserData();
+            }
+        });
+
+        add(exportButton);
+        add(convertButton);
+        add(sendEmailButton);
+        add(softDeleteButton);
+        add(hardDeleteButton);
+
+        pack();
+        setLocationRelativeTo(null);
+    }
+
+    private void exportUserData() {
         generateRandomData();
 
         Instant start = Instant.now();
-        logger.info("Application started");
+        System.out.println("Application started");
 
         System.out.println("Application Started: " + start);
         Scanner scanner = new Scanner(System.in);
@@ -55,94 +121,76 @@ public class Application {
         String userName = scanner.nextLine();
         setLoginUserName(userName);
 
-
-
-
         ExportHandler exportHandler = new ExportHandler(userService, postService, paymentService, userActivityService);
-        //IDataHandler deleteHandler = new DeleteHandler(userService, postService, paymentService, userActivityService);
-        IDataHandler convertHandler = new ConvertHandler(userService, postService, paymentService, userActivityService);
 
-        //String userId = "user10";
         String storagePath = "king/TextFiles";
 
-         //Export
         System.out.println("Exporting user data...");
         try {
             exportHandler.exportUserData(userName, storagePath);
+            System.out.println("User data exported successfully\n");
+            JOptionPane.showMessageDialog(this, "User data exported successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
             System.out.println("Error exporting user data: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error exporting user data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             logger.error("Error exporting user data", e);
-
+        } catch (SystemBusyException | NotFoundException | BadRequestException e) {
+            throw new RuntimeException(e);
         }
+    }
 
+    private void convertToPDF() {
+        StringBuilder test = new StringBuilder(getLoginUserName());
 
-        StringBuilder test =new StringBuilder(userName);
-        // Convert
-        String inputFilePath = "king\\TextFiles\\"+test+"_data_.zip";
-        String outputFilePath = "king\\pdf_files"+"\\"+ test;
+        IDataHandler convertHandler = new ConvertHandler(userService, postService, paymentService, userActivityService);
+
+        String inputFilePath = "king\\TextFiles\\" + test + "_data_.zip";
+        String outputFilePath = "king\\pdf_files" + "\\" + test;
         System.out.println("\nConverting to PDF...");
         try {
             convertHandler.convertToPdf(inputFilePath, outputFilePath);
+            System.out.println("Conversion to PDF completed successfully\n");
+            JOptionPane.showMessageDialog(this, "Conversion to PDF completed successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
             logger.error("Error converting to PDF", e);
-
-            System.out.println("Error converting to PDF: " + e.getMessage()+"\n");
+            System.out.println("Error converting to PDF: " + e.getMessage() + "\n");
+            JOptionPane.showMessageDialog(this, "Error converting to PDF: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-
-
-        //convert pdf to zip
-        System.out.println("\nconverting pdf to zip ...");
-
-        StringBuilder inputFilePathPdf=
-                      new StringBuilder("king\\pdf_files");
-        StringBuilder outPutFilePathZip=
-                      new StringBuilder("king\\ZipFiles\\"+test+".zip");
-            try {
-                ConvertContext context=new ConvertContext();
-                context.setContext(new ConvertPDFtoZip());
-                context.getContext(inputFilePathPdf.toString(),outPutFilePathZip.toString());
-                System.out.println("Converted pdf to zip Successfully\n");
-            }
-            catch (Exception e){
-                System.out.println("Error converting Pdf to Zip: " + e.getMessage());
-            }
-
-
-
-        // send a zip file by email as an attachment
-        System.out.println("sending data by email...");
-            SendByEmail s= new SendByEmail();
-            s.Send("yousefnajeh03@gmail.com");
-        System.out.println("sending data by email successfully");
-
-        //Delete (soft)
-        System.out.println("Soft deleting user data...");
-        try {
-            DeletContext softContext= new DeletContext(new SoftDeleteProcessor(userService, paymentService,postService, userActivityService));
-            softContext.getContext(userName);
-            System.out.println("soft deleting done successfully\n");
-        }
-        catch (Exception e) {
-            System.out.println("Error error in soft deleting user data : " + e.getMessage());
-        }
-
-//          // Delete (hard)
-
-        System.out.println("Hard deleting user data...");
-        try {
-            DeletContext hardContext=new DeletContext(new HardDeleteProcessor(userService, paymentService,postService, userActivityService));
-            hardContext.getContext(userName);
-            System.out.println("had deleting the user successfully\n");
-        }
-        catch (Exception e) {
-            System.out.println("Error error in hard deleting user data : " + e.getMessage());
-        }
-
-      Instant end = Instant.now();
-        System.out.println("Application Ended: " + end);
-
     }
 
+    private void sendDataByEmail() throws IOException {
+        System.out.println("Sending data by email...");
+        SendByEmail s = new SendByEmail();
+        s.Send("yousefnajeh03@gmail.com");
+        System.out.println("Data sent by email successfully\n");
+        JOptionPane.showMessageDialog(this, "Data sent by email successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void softDeleteUserData() {
+        System.out.println("Soft deleting user data...");
+        try {
+            DeletContext softContext = new DeletContext(new SoftDeleteProcessor(userService, paymentService, postService, userActivityService));
+            softContext.getContext(getLoginUserName());
+            System.out.println("Soft deleting done successfully\n");
+            JOptionPane.showMessageDialog(this, "Soft deleting done successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception e) {
+            System.out.println("Error in soft deleting user data: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error in soft deleting user data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void hardDeleteUserData() {
+        System.out.println("Hard deleting user data...");
+        try {
+            DeletContext hardContext = new DeletContext(new HardDeleteProcessor(userService, paymentService, postService, userActivityService));
+            hardContext.getContext(getLoginUserName());
+            System.out.println("Hard deleting done successfully\n");
+            JOptionPane.showMessageDialog(this, "Hard deleting done successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception e) {
+            System.out.println("Error in hard deleting user data: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error in hard deleting user data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     private static void generateRandomData() {
         Util.setSkipValidation(true);
@@ -156,11 +204,10 @@ public class Application {
         Util.setSkipValidation(false);
     }
 
-
     private static void generateActivity(int i) {
         for (int j = 0; j < 100; j++) {
             try {
-                if(UserType.NEW_USER.equals(userService.getUser("user" + i).getUserType())) {
+                if (UserType.NEW_USER.equals(userService.getUser("user" + i).getUserType())) {
                     continue;
                 }
             } catch (Exception e) {
@@ -222,8 +269,16 @@ public class Application {
         return loginUserName;
     }
 
-    private static void setLoginUserName(String loginUserName) {
+    public static void setLoginUserName(String loginUserName) {
+        ApplicationGUI Application = null;
         Application.loginUserName = loginUserName;
     }
-}
 
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new ApplicationGUI().setVisible(true);
+            }
+        });
+    }
+}
