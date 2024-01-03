@@ -15,6 +15,7 @@ import edu.najah.cap.posts.Post;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
 import java.util.List;
 
 public class  HardDeleteProcessor implements IDelete {
@@ -23,7 +24,7 @@ public class  HardDeleteProcessor implements IDelete {
     private final IPostService postService;
     private final IUserActivityService userActivityService;
     private final Logger logger;
-
+    private static HashSet<String>deletedUsers=new HashSet<>();
     public HardDeleteProcessor(IUserService userService, IPayment paymentService, IPostService postService, IUserActivityService userActivityService) {
         this.userService = userService;
         this.paymentService = paymentService;
@@ -34,6 +35,7 @@ public class  HardDeleteProcessor implements IDelete {
     @Override
     public void delete(String userId) throws SystemBusyException, NotFoundException, BadRequestException {
         UserProfile test= userService.getUser(userId);
+        deletedUsers.add(test.getUserName());
         deleteUser(userId);
         deletePosts(userId);
         if (test.getUserType().equals(UserType.PREMIUM_USER)||
@@ -71,5 +73,8 @@ public class  HardDeleteProcessor implements IDelete {
       if(activity!=null){
           activity.clear();
       }
+    }
+    public static HashSet<String>getDeletedUsersList(){
+        return deletedUsers;
     }
 }
