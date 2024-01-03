@@ -271,7 +271,7 @@ public class ApplicationGUI extends JFrame {
 
     public static void setLoginUserName(String loginUserName) {
         ApplicationGUI Application = null;
-        Application.loginUserName = loginUserName;
+        ApplicationGUI.loginUserName = loginUserName;
     }
 
     public static void main(String[] args) {

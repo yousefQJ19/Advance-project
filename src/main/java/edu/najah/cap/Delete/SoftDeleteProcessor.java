@@ -32,20 +32,27 @@
         this.logger = LoggerFactory.getLogger(SoftDeleteProcessor.class);
     }
     @Override
-    public void delete(String userId) throws SystemBusyException, BadRequestException, NotFoundException {
-        UserProfile test= userService.getUser(userId);
-        deletePosts(userId);
-        if (test.getUserType().equals(UserType.PREMIUM_USER)||
-                test.getUserType().equals(UserType.REGULAR_USER)){
-            deleteUserActivity(userId);
-        }
-        if (test.getUserType().equals(UserType.PREMIUM_USER)){
-            deletePaymentTransactions(userId);
-        }
-        logger.info("User data deleted for userId: {}");
+    public void delete(String userId) {
+        new Thread(() -> {
+            try {
+                UserProfile test = userService.getUser(userId);
+                deletePosts(userId);
+                if (test.getUserType().equals(UserType.PREMIUM_USER) ||
+                        test.getUserType().equals(UserType.REGULAR_USER)) {
+                    deleteUserActivity(userId);
+                }
+                if (test.getUserType().equals(UserType.PREMIUM_USER)) {
+                    deletePaymentTransactions(userId);
+                }
+                logger.info("User data soft deleted for userId: {}");
+            } catch (Exception e) {
+                logger.error("Error in soft deleting user data for userId: {}");
+            }
+        }).start();
     }
 
-    private void deletePaymentTransactions(String userId) throws SystemBusyException, BadRequestException, NotFoundException {
+
+            private void deletePaymentTransactions(String userId) throws SystemBusyException, BadRequestException, NotFoundException {
         List<Transaction> transactions = paymentService.getTransactions(userId);
         if(transactions!=null){
             transactions.clear();

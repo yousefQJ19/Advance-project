@@ -32,18 +32,26 @@ public class  HardDeleteProcessor implements IDelete {
         this.logger = LoggerFactory.getLogger(HardDeleteProcessor.class);
     }
     @Override
-    public void delete(String userId) throws SystemBusyException, NotFoundException, BadRequestException {
-        UserProfile test= userService.getUser(userId);
-        deleteUser(userId);
-        deletePosts(userId);
-        if (test.getUserType().equals(UserType.PREMIUM_USER)||
-                test.getUserType().equals(UserType.REGULAR_USER)){
-            deleteUserActivity(userId);
-        }
-        if (test.getUserType().equals(UserType.PREMIUM_USER)){
-            deletePaymentTransactions(userId);
-        }
+    public void delete(String userId) {
+        new Thread(() -> {
+            try {
+                UserProfile test = userService.getUser(userId);
+                deleteUser(userId);
+                deletePosts(userId);
+                if (test.getUserType().equals(UserType.PREMIUM_USER) ||
+                        test.getUserType().equals(UserType.REGULAR_USER)) {
+                    deleteUserActivity(userId);
+                }
+                if (test.getUserType().equals(UserType.PREMIUM_USER)) {
+                    deletePaymentTransactions(userId);
+                }
+                logger.info("User data hard deleted for userId: {}");
+            } catch (Exception e) {
+                logger.error("Error in hard deleting user data for userId: {}");
+            }
+        }).start();
     }
+
 
     private void deleteUser(String userId) throws SystemBusyException, NotFoundException, BadRequestException {
         userService.deleteUser(userId);
