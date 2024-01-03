@@ -12,7 +12,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class ConvertPDFtoZip implements IConvert{
-    private static final Logger logger = LoggerFactory.getLogger(convertZipToPdf.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConvertPDFtoZip.class);
     @Override
     public void Convert(String pdfDirectory, String zipDirectory) {
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(zipDirectory))) {
